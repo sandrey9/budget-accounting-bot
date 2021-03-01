@@ -1,8 +1,10 @@
-from aiogram import types
-from loader import dp
 import calendar
-from storage.postgres import get_report_json
+
+from aiogram import types
 from aiogram.utils.markdown import hbold, hunderline
+
+from loader import dp
+from storage.postgres import get_report_json
 
 
 @dp.message_handler(state='*', commands=['report'])
