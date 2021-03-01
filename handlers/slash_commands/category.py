@@ -1,5 +1,5 @@
 from aiogram import types
-from keyboards.inline import get_expense_type_keyboard_to_delete
+from keyboards.inline import create_outcome_category_keyboard, categories_query
 from loader import dp
 from storage.postgres import add_outcome_category, delete_outcome_category
 
@@ -14,18 +14,17 @@ async def add_category(message: types.Message):
 
 
 @dp.message_handler(commands='category_delete')
-async def delete_category(message: types.Message):
+async def select_category_to_delete(message: types.Message):
     await message.reply("Какую категорию удалить:",
-                        reply_markup=(get_expense_type_keyboard_to_delete(message.chat.id)))
+                        reply_markup=create_outcome_category_keyboard(message.chat.id, 'del category'))
 
 
-@dp.callback_query_handler(text_contains='delete_et')
-async def get_expense(call: types.CallbackQuery):
-    _, btn_id = call.data.split(':')
-    if len(delete_outcome_category(btn_id)) != 0:
-        await call.message.edit_text('Удалено')
+@dp.callback_query_handler(categories_query.filter(action='del category'))
+async def delete_category(query: types.CallbackQuery, callback_data: dict):
+    if delete_outcome_category(callback_data['category_id']):
+        await query.message.edit_text('Удалено')
     else:
-        await call.message.edit_text('Нельзя удалить')
+        await query.message.edit_text('Нельзя удалить')
 
 
 @dp.callback_query_handler(text="cancel")
