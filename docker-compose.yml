@@ -4,8 +4,6 @@ services:
   db:
     image: postgres:13.1-alpine
     container_name: postgres
-    volumes:
-      - /home/user01/vol:/var/lib/postgresql/data
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=password
